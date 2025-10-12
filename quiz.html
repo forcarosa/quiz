@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Outubro Rosa 🎀</title>
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #ffeef4;
+    color: #333;
+    text-align: center;
+    padding: 20px;
+  }
+  h1 {
+    color: #e91e63;
+  }
+  .quiz-container {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    max-width: 700px;
+    margin: auto;
+  }
+  .option {
+    display: block;
+    margin: 8px 0;
+    background: #fce4ec;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .option:hover {
+    background: #f8bbd0;
+  }
+  button {
+    margin-top: 15px;
+    padding: 10px 25px;
+    background: #e91e63;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  button:hover {
+    background: #c2185b;
+  }
+  .hidden { display: none; }
+  .correct { background: #c8e6c9 !important; }
+  .wrong { background: #ffcdd2 !important; }
+  #score {
+    font-size: 1.2em;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+  <h1>🎀 Quiz Outubro Rosa 🎀</h1>
+  <div class="quiz-container">
+    <div id="question-container"></div>
+    <button id="next-btn" class="hidden">Próxima</button>
+    <h3 id="score" class="hidden"></h3>
+    <button id="restart-btn" class="hidden">Reiniciar Quiz</button>
+  </div>
+
+<script>
+const quiz = [
+  {q:"O que é o Outubro Rosa?",o:["Um mês dedicado à moda","Um movimento de conscientização sobre o câncer de mama","Um evento esportivo","Campanha de doação de sangue"],a:1},
+  {q:"Qual é o principal objetivo do Outubro Rosa?",o:["Conscientizar sobre a importância da prevenção e diagnóstico precoce do câncer de mama","Arrecadar fundos","Divulgar novos tratamentos","Celebrar profissionais da saúde"],a:0},
+  {q:"O câncer de mama atinge apenas mulheres?",o:["Sim","Não, também pode atingir homens","Nunca diagnosticado","Apenas hereditário"],a:1},
+  {q:"Qual exame detecta precocemente o câncer de mama?",o:["Ultrassonografia","Mamografia","Tomografia","Ressonância"],a:1},
+  {q:"O autoexame substitui a mamografia?",o:["Sim","Não","Depende da idade","Apenas mensalmente"],a:1},
+  {q:"Homens têm glândulas mamárias?",o:["Não","Sim, em menor quantidade","Apenas alguns","Antes da puberdade"],a:1},
+  {q:"Qual sintoma é mais comum no câncer de mama?",o:["Febre","Nódulo ou caroço na mama","Coceira","Falta de apetite"],a:1},
+  {q:"Qual destes é um fator de risco para o câncer de mama?",o:["Histórico familiar","Atividade física","Peso saudável","Amamentar"],a:0},
+  {q:"Qual hormônio está relacionado a alguns tipos de câncer de mama?",o:["Estrogênio","Testosterona","Insulina","Adrenalina"],a:0},
+  {q:"Homens com câncer de mama podem fazer mamografia?",o:["Não","Sim, em casos suspeitos","Apenas com implantes","Apenas maiores de 60"],a:1},
+  {q:"A obesidade aumenta o risco de câncer de mama?",o:["Não","Sim","Apenas em jovens","Apenas hereditário"],a:1},
+  {q:"O câncer de mama tem cura?",o:["Não","Sim, se diagnosticado cedo","Apenas com cirurgia","Apenas com quimio"],a:1},
+  {q:"Qual atitude ajuda na prevenção do câncer de mama?",o:["Atividade física regular","Dormir pouco","Beber álcool","Evitar amamentar"],a:0},
+  {q:"O câncer de mama masculino é mais comum em:",o:["Adolescentes","Homens acima dos 60 anos","Atletas","Baixa testosterona"],a:1},
+  {q:"O que significa diagnóstico precoce?",o:["Descobrir no início","Tratar após metástase","Fazer exame com dor","Esperar o tumor crescer"],a:0},
+  {q:"Quais profissionais ajudam na prevenção?",o:["Médicos e enfermeiros","Apenas médicos","Apenas psicólogos","Nenhum"],a:0},
+  {q:"O que é uma mamoplastia?",o:["Cirurgia plástica nas mamas","Exame de imagem","Tipo de tumor","Tratamento com radiação"],a:0},
+  {q:"Qual é um mito sobre o câncer de mama?",o:["Só quem tem casos na família pode ter","Homens também podem ter","Detectar cedo aumenta as chances de cura","A mamografia salva vidas"],a:0},
+  {q:"Quais são os principais tipos de tratamento?",o:["Cirurgia, quimio, rádio e hormonioterapia","Apenas cirurgia","Remédios naturais","Nenhum eficaz"],a:0},
+  {q:"O laço rosa simboliza:",o:["Moda","A luta contra o câncer de mama","Doações","Campanha infantil"],a:1},
+  {q:"Sinal comum no câncer de mama masculino:",o:["Caroço ou secreção no mamilo","Dor abdominal","Tosse","Dor nas costas"],a:0},
+  {q:"Como se confirma o diagnóstico?",o:["Biópsia","Ultrassom","Mamografia","Exame de sangue"],a:0},
+  {q:"A amamentação reduz o risco de câncer de mama?",o:["Sim","Não","Sem relação","Depende do parto"],a:0},
+  {q:"Qual hábito aumenta o risco da doença?",o:["Consumo excessivo de álcool","Caminhar","Boa alimentação","Sono regular"],a:0},
+  {q:"Qual alimento ajuda na prevenção?",o:["Frutas, verduras e grãos integrais","Fast food","Refrigerantes","Doces"],a:0},
+  {q:"O câncer de mama pode aparecer em qualquer parte da mama?",o:["Sim","Apenas na parte superior","Perto do mamilo","Na axila"],a:0},
+  {q:"O exame clínico das mamas é feito por:",o:["Profissional de saúde, por palpação","Ultrassom","Exame de sangue","Tomografia"],a:0},
+  {q:"O que é metástase?",o:["Quando o câncer se espalha","Quando o tumor desaparece","Quando o tratamento termina","Um tipo de exame"],a:0},
+  {q:"A partir de qual idade é recomendada a mamografia anual?",o:["30 anos","40 anos","45 anos","50 anos"],a:1},
+  {q:"Mensagem do Outubro Rosa:",o:["Previna-se, cuide-se e faça seus exames!","O câncer é inevitável","Só mulheres devem se preocupar","A saúde feminina é menos importante"],a:0}
+];
+
+let current = 0;
+let score = 0;
+let questions = [];
+const container = document.getElementById("question-container");
+const nextBtn = document.getElementById("next-btn");
+const scoreDisplay = document.getElementById("score");
+const restartBtn = document.getElementById("restart-btn");
+
+function shuffle(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+function startQuiz() {
+  score = 0;
+  current = 0;
+  questions = shuffle([...quiz]);
+  scoreDisplay.classList.add("hidden");
+  restartBtn.classList.add("hidden");
+  nextBtn.classList.add("hidden");
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = questions[current];
+  container.innerHTML = `<h3>${current + 1}/${questions.length} — ${q.q}</h3>` + 
+    q.o.map((opt, i) => `<div class="option" onclick="selectOption(${i})">${opt}</div>`).join("");
+  nextBtn.classList.add("hidden");
+}
+
+function selectOption(i) {
+  const q = questions[current];
+  const options = document.querySelectorAll(".option");
+  options.forEach((opt, idx) => {
+    opt.onclick = null;
+    if (idx === q.a) opt.classList.add("correct");
+    else if (idx === i) opt.classList.add("wrong");
+  });
+  if (i === q.a) score++;
+
+  // ✅ ENCERRA O QUIZ AUTOMATICAMENTE AO ALCANÇAR 4 ACERTOS
+  if (score >= 4) {
+    finishQuiz(true);
+    return;
+  }
+
+  nextBtn.classList.remove("hidden");
+}
+
+nextBtn.onclick = () => {
+  current++;
+  if (current < questions.length) showQuestion();
+  else finishQuiz(false);
+};
+
+function finishQuiz(completed = false) {
+  container.innerHTML = "";
+  nextBtn.classList.add("hidden");
+  scoreDisplay.classList.remove("hidden");
+  restartBtn.classList.remove("hidden");
+
+  if (completed) {
+    scoreDisplay.textContent = `🎉 Parabéns! Você acertou ${score} perguntas e cumpriu o objetivo!`;
+  } else {
+    scoreDisplay.textContent = `Você acertou ${score}. Tente novamente para alcançar 4 acertos! 💪`;
+  }
+}
+
+restartBtn.onclick = startQuiz;
+
+startQuiz();
+</script>
+</body>
+</html>
