@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Quiz Força Rosa — DIAGNÓSTICO</title>
+<style>
+:root{--bg:#ffe6f0;--pink:#ff4da6;--soft:#fde9f3;--goal:#ffd0e8}
+body{font-family:system-ui,Arial;margin:0;background:var(--bg);color:#222;display:flex;justify-content:center;padding:20px;}
+.wrap{max-width:900px;width:100%}
+.header{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.logo{width:54px;height:54px;border-radius:8px;background:linear-gradient(135deg,#ffe6f0,#ffdff0);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--pink)}
+h1{margin:0;color:var(--pink);font-size:1.4rem}
+.card{background:#fff;border-radius:12px;padding:18px;box-shadow:0 8px 30px rgba(0,0,0,0.08)}
+#goal{display:none;background:var(--goal);padding:10px;border-radius:8px;font-weight:700;margin-bottom:12px;text-align:center}
+#progress{color:#555;margin-bottom:8px}
+h2.question{font-size:1.05rem;margin:10px 0 12px 0;color:#333}
+.options{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.option{background:var(--soft);padding:10px 12px;border-radius:8px;cursor:pointer;user-select:none;transition:transform .08s ease}
+.option:hover{transform:translateY(-2px)}
+.correct{background:#c8e6c9!important}
+.wrong{background:#ffcdd2!important}
+.controls{display:flex;gap:8px;justify-content:center;align-items:center;margin-top:8px}
+button{background:var(--pink);color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:700}
+button.secondary{background:#6a1b4d}
+.hidden{display:none}
+#score{display:none;text-align:center;margin-top:14px;font-weight:700}
+.confetti{position:fixed;width:10px;height:10px;pointer-events:none;z-index:9999;animation:fall 3s linear forwards;border-radius:2px}
+@keyframes fall{0%{transform:translateY(-10vh) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
+.footer{text-align:center;margin-top:12px;color:#666;font-size:0.9rem}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="logo">🎀</div>
+      <div>
+        <h1>Quiz Força Rosa — DIAGNÓSTICO</h1>
+        <div style="font-size:0.95rem;color:#666">Categoria: DIAGNÓSTICO — Responda e avance no desafio</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div id="goal">🎉 Parabéns! Você cumpriu o objetivo (4 acertos)!</div>
+      <div id="progress">1 / 10</div>
+      <div id="question-container"></div>
+
+      <div class="controls">
+        <button id="next-btn" class="hidden">Próxima</button>
+        <button id="restart-btn" class="hidden secondary">Reiniciar</button>
+        <button id="next-topic-btn" class="hidden">Ir para o próximo tópico</button>
+      </div>
+
+      <div id="score"></div>
+    </div>
+
+    <div class="footer">Parte do Desafio Força Rosa — Complete os 6 tópicos e ganhe seu brinde!</div>
+  </div>
+
+  <audio id="applause" src="https://actions.google.com/sounds/v1/cheering/crowd_cheer.ogg" preload="auto"></audio>
+
+<script>
+const rawQuestions = [{"q": "A partir de que idade o Ministério da Saúde recomenda iniciar a mamografia anual?", "o": ["20 anos", "30 anos", "40 anos", "50 anos"], "a": 2}, {"q": "O autoexame das mamas ajuda a:", "o": ["Substituir a mamografia", "Não serve para nada", "Conhecer o corpo e perceber alterações", "Fazer diagnóstico definitivo"], "a": 2}, {"q": "Qual exame confirma o diagnóstico de câncer de mama?", "o": ["Mamografia", "Ultrassonografia", "Exame de sangue", "Biópsia"], "a": 3}, {"q": "O câncer de mama é mais comum em mulheres:", "o": ["Com menos de 30 anos", "Entre 50 e 69 anos", "Que nunca tiveram filhos (sempre)", "Apenas na pós-menopausa"], "a": 1}, {"q": "A principal vantagem da mamografia é:", "o": ["Detectar alterações antes de serem palpáveis", "Substituir o autoexame", "Tratar o câncer", "Evitar a cirurgia"], "a": 0}, {"q": "O exame de imagem complementar à mamografia pode ser:", "o": ["Ressonância magnética das mamas", "Raio-X do pé", "Eletroencefalograma", "Colonoscopia"], "a": 0}, {"q": "O intervalo recomendado para a mamografia, em mulheres sem histórico familiar, costuma ser:", "o": ["A cada 3 meses", "A cada 6 meses", "Uma vez por ano", "Uma vez a cada 2 anos"], "a": 3}, {"q": "A detecção precoce é importante porque:", "o": ["Permite tratamento menos agressivo e maior chance de cura", "Aumenta a mortalidade", "Evita a necessidade de exames futuros", "Substitui acompanhamento médico"], "a": 0}, {"q": "Um nódulo suspeito geralmente apresenta:", "o": ["Dor intensa sempre", "Superfície irregular e endurecida", "Coloração azulada constante", "Emissão de sons ao toque"], "a": 1}, {"q": "A saída de secreção com sangue pelo mamilo deve ser:", "o": ["Ignorada", "Avaliada por um médico", "Tratada com pomadas caseiras", "Considerada normal se ocorrer raramente"], "a": 1}];
+
+let current = 0;
+let score = 0;
+let goalReached = false;
+let questions = [];
+
+const container = document.getElementById("question-container");
+const nextBtn = document.getElementById("next-btn");
+const restartBtn = document.getElementById("restart-btn");
+const nextTopicBtn = document.getElementById("next-topic-btn");
+const progressEl = document.getElementById("progress");
+const scoreEl = document.getElementById("score");
+const goalEl = document.getElementById("goal");
+const applause = document.getElementById("applause");
+
+function shuffleArray(a){ const arr = a.slice(); for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]] } return arr; }
+
+function startQuiz(){
+  score=0; current=0; goalReached=false;
+  // shuffle questions and also shuffle options inside each question
+  questions = shuffleArray(rawQuestions.map(q=>({q:q.q,o:shuffleArray(q.o),a:q.a})));
+  // After shuffling options, a (index) must be recalculated: find which option equals original correct text
+  questions = questions.map(orig => {
+    const raw = rawQuestions.find(r=>r.q===orig.q);
+    let correctText = raw.o[raw.a];
+    let newIndex = orig.o.findIndex(x=>x===correctText);
+    if(newIndex===-1) newIndex = 0;
+    return {q: orig.q, o: orig.o, a: newIndex};
+  });
+  scoreEl.style.display='none';
+  restartBtn.style.display='none';
+  nextBtn.classList.add('hidden');
+  nextTopicBtn.classList.add('hidden');
+  goalEl.style.display='none';
+  renderQuestion();
+  updateProgress();
+}
+
+function updateProgress(){ progressEl.textContent = (current+1) + ' / ' + questions.length; }
+
+function renderQuestion(){
+  const q = questions[current];
+  container.innerHTML = `<h2 class="question">${q.q}</h2>` + '<div class="options">' + q.o.map((opt,idx)=>`<div class="option" data-index="${idx}" onclick="selectOption(${idx})">${String.fromCharCode(65+idx)}) ${opt}</div>`).join('') + '</div>';
+  nextBtn.classList.add('hidden');
+  updateProgress();
+}
+
+function createConfetti(){ for(let i=0;i<60;i++){ const c=document.createElement('div'); c.className='confetti'; c.style.left=Math.random()*window.innerWidth+'px'; c.style.backgroundColor=`hsl(${Math.random()*340+330},70%,60%)`; c.style.width=(6+Math.random()*10)+'px'; c.style.height=(6+Math.random()*10)+'px'; document.body.appendChild(c); setTimeout(()=>c.remove(),3200); } }
+
+function selectOption(i){
+  const q=questions[current];
+  const opts=document.querySelectorAll('.option');
+  opts.forEach((el,idx)=>{ el.onclick=null; if(idx===q.a) el.classList.add('correct'); if(idx===i && idx!==q.a) el.classList.add('wrong'); });
+  if(i===q.a) score++;
+  if(score>=4 && !goalReached){ goalReached=true; goalEl.style.display='block'; createConfetti(); try{ applause.currentTime=0; applause.play(); }catch(e){} nextTopicBtn.classList.remove('hidden'); }
+  nextBtn.classList.remove('hidden');
+}
+
+nextBtn.addEventListener('click', ()=>{ current++; if(current<questions.length) renderQuestion(); else finishQuiz(); });
+
+function finishQuiz(){ container.innerHTML=''; nextBtn.classList.add('hidden'); scoreEl.style.display='block'; restartBtn.style.display='inline-block'; if(score>=4){ scoreEl.textContent = `🎉 Você acertou ${score} de ${questions.length} e venceu este tópico!`; nextTopicBtn.classList.remove('hidden'); } else { scoreEl.textContent = `Você acertou ${score} de ${questions.length}. Tente novamente para atingir 4 acertos.`; } progressEl.textContent = 'Fim'; }
+
+restartBtn.addEventListener('click', startQuiz);
+
+nextTopicBtn.addEventListener('click', ()=>{ window.location.href = 'quiz3.html'; });
+
+window.selectOption = selectOption;
+startQuiz();
+</script>
+</body>
+</html>
