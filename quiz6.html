@@ -117,10 +117,10 @@ function selectOption(i){
   opts.forEach((el,idx)=>{ el.onclick=null; if(idx===q.a) el.classList.add('correct'); if(idx===i && idx!==q.a) el.classList.add('wrong'); });
   if(i===q.a) score++;
   if(score>=4 && !goalReached){ goalReached=true; goalEl.style.display='block'; createConfetti(); try{ applause.currentTime=0; applause.play(); }catch(e){} nextTopicBtn.classList.remove('hidden'); }
-  nextBtn.classList.remove('hidden');
+  
 }
 
-nextBtn.addEventListener('click', ()=>{ current++; if(current<questions.length) renderQuestion(); else finishQuiz(); });
+nextBtn.addEventListener('click', ()=>{ current++; nextBtn.classList.add('hidden'); if(current<questions.length) renderQuestion(); else finishQuiz(); });
 
 function finishQuiz(){ container.innerHTML=''; scoreEl.style.display='block'; restartBtn.style.display='inline-block'; if(score>=4){ scoreEl.textContent = `🎉 Você acertou ${score} de ${questions.length} e venceu este tópico!`; nextTopicBtn.classList.remove('hidden'); } else { scoreEl.textContent = `Você acertou ${score} de ${questions.length}. Tente novamente para atingir 4 acertos.`; } progressEl.textContent = 'Fim'; }
 
