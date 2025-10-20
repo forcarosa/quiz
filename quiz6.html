@@ -124,19 +124,8 @@ function selectOption(i){
   const opts=document.querySelectorAll('.option');
   opts.forEach((el,idx)=>{ el.onclick=null; if(idx===q.a) el.classList.add('correct'); if(idx===i && idx!==q.a) el.classList.add('wrong'); });
   if(i===q.a) score++;
-
-  // Quando atingir 4 acertos, na mesma tela:
-  if(score>=4 && !goalReached){
-    goalReached=true;
-    goalEl.style.display='block';
-    createConfetti();
-    try{ applause.currentTime=0; applause.play(); }catch(e){}
-    nextTopicBtn.classList.remove('hidden');
-    nextTopicBtn.classList.add('glow');   // 💖 ativa o destaque animado
-    nextBtn.classList.remove('hidden');
-  } else if(!goalReached){
-    nextBtn.classList.remove('hidden');
-  }
+  if(score>=4 && !goalReached){ goalReached=true; goalEl.style.display='block'; createConfetti(); try{ applause.currentTime=0; applause.play(); }catch(e){} nextTopicBtn.classList.remove('hidden'); }
+  nextBtn.classList.remove('hidden');
 }
 
 nextBtn.addEventListener('click', ()=>{ current++; nextBtn.classList.add('hidden'); if(current<questions.length) renderQuestion(); else finishQuiz(); });
