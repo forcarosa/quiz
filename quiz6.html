@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -61,7 +60,7 @@ button.secondary{background:#6a1b4d}
   <audio id="applause" src="https://actions.google.com/sounds/v1/cheering/crowd_cheer.ogg" preload="auto"></audio>
 
 <script>
-const rawQuestions = [{"q": "O trabalhador afastado por tratamento oncológico tem direito a:", "o": ["Auxílio-doença do INSS (quando atendidos os requisitos)", "Férias vitalícias", "Aumento salarial automático", "Encerramento do contrato sem pagamento"], "a": 0}, {"q": "Se o tratamento deixar sequelas permanentes, o paciente pode ter direito a:", "o": ["Aposentadoria por invalidez (se comprovada)", "Direito a duas licenças-maternidade adicionais", "Transferência imediata para qualquer cargo", "Suspensão de pagamento de contas sem análise"], "a": 0}, {"q": "Durante o tratamento, o trabalhador pode solicitar:", "o": ["Auxílio financeiro sem avaliação", "Saque do FGTS e PIS/PASEP conforme regras aplicáveis", "Cancelamento automático de dívidas sem processo", "Pagamento de multa por parte do empregador"], "a": 1}, {"q": "Mulheres mastectomizadas têm direito a:", "o": ["Reconstrução mamária gratuita pelo SUS, conforme a lei", "Apenas cirurgia estética particular", "Reconstrução apenas após 10 anos", "Alimentação gratuita vitalícia"], "a": 0}, {"q": "A Lei nº 12.732/2012 garante:", "o": ["Acesso a próteses gratuitamente em qualquer país", "Início do tratamento oncológico pelo SUS em prazo máximo recomendado (com regras específicas)", "Isenção automática de IPTU", "Tratamento apenas em hospitais privados"], "a": 1}, {"q": "Planos de saúde podem negar cobertura do tratamento oncológico quando:", "o": ["Nunca — o tratamento oncológico tem cobertura conforme legislação e regras do plano", "Sempre podem negar sem justificar", "Apenas quando o paciente não pagar a anuuidade", "Se a doença for genética"], "a": 0}, {"q": "Pacientes com câncer podem ter isenção de imposto de renda quando:", "o": ["Há invalidez permanente e seguindo a legislação vigente", "Estão empregados", "Recebem alta hospitalar", "Têm qualquer despesa médica"], "a": 0}, {"q": "Pacientes em tratamento pelo SUS têm direito a:", "o": ["Transporte gratuito em todos os deslocamentos sem regras", "Possibilidade de transporte ou auxílio para tratamento em algumas cidades/condições, conforme programas locais", "Transporte apenas para viagens internacionais", "Nenhum tipo de auxílio logístico"], "a": 1}, {"q": "Quem tem financiamento habitacional e fica inválido por câncer:", "o": ["Pode ter quitação do contrato conforme cláusulas da seguradora e do contrato", "Perde automaticamente o imóvel", "Deve pagar multa por invalidez", "Tem aumento automático da parcela"], "a": 0}, {"q": "Após o tratamento, o retorno ao trabalho deve ser:", "o": ["Imediato e sem qualquer avaliação", "Acompanhado por médico e, se necessário, feito de forma gradativa com adaptações", "Proibido para sempre", "Decidido exclusivamente pelo empregador"], "a": 1}];
+const rawQuestions = [{"q":"O trabalhador afastado por tratamento oncológico tem direito a:","o":["Auxílio-doença do INSS (quando atendidos os requisitos)","Férias vitalícias","Aumento salarial automático","Encerramento do contrato sem pagamento"],"a":0},{"q":"Se o tratamento deixar sequelas permanentes, o paciente pode ter direito a:","o":["Aposentadoria por invalidez (se comprovada)","Direito a duas licenças-maternidade adicionais","Transferência imediata para qualquer cargo","Suspensão de pagamento de contas sem análise"],"a":0},{"q":"Durante o tratamento, o trabalhador pode solicitar:","o":["Auxílio financeiro sem avaliação","Saque do FGTS e PIS/PASEP conforme regras aplicáveis","Cancelamento automático de dívidas sem processo","Pagamento de multa por parte do empregador"],"a":1},{"q":"Mulheres mastectomizadas têm direito a:","o":["Reconstrução mamária gratuita pelo SUS, conforme a lei","Apenas cirurgia estética particular","Reconstrução apenas após 10 anos","Alimentação gratuita vitalícia"],"a":0},{"q":"A Lei nº 12.732/2012 garante:","o":["Acesso a próteses gratuitamente em qualquer país","Início do tratamento oncológico pelo SUS em prazo máximo recomendado (com regras específicas)","Isenção automática de IPTU","Tratamento apenas em hospitais privados"],"a":1},{"q":"Planos de saúde podem negar cobertura do tratamento oncológico quando:","o":["Nunca — o tratamento oncológico tem cobertura conforme legislação e regras do plano","Sempre podem negar sem justificar","Apenas quando o paciente não pagar a anuuidade","Se a doença for genética"],"a":0},{"q":"Pacientes com câncer podem ter isenção de imposto de renda quando:","o":["Há invalidez permanente e seguindo a legislação vigente","Estão empregados","Recebem alta hospitalar","Têm qualquer despesa médica"],"a":0},{"q":"Pacientes em tratamento pelo SUS têm direito a:","o":["Transporte gratuito em todos os deslocamentos sem regras","Possibilidade de transporte ou auxílio para tratamento em algumas cidades/condições, conforme programas locais","Transporte apenas para viagens internacionais","Nenhum tipo de auxílio logístico"],"a":1},{"q":"Quem tem financiamento habitacional e fica inválido por câncer:","o":["Pode ter quitação do contrato conforme cláusulas da seguradora e do contrato","Perde automaticamente o imóvel","Deve pagar multa por invalidez","Tem aumento automático da parcela"],"a":0},{"q":"Após o tratamento, o retorno ao trabalho deve ser:","o":["Imediato e sem qualquer avaliação","Acompanhado por médico e, se necessário, feito de forma gradativa com adaptações","Proibido para sempre","Decidido exclusivamente pelo empregador"],"a":1}];
 
 let current = 0;
 let score = 0;
@@ -81,9 +80,7 @@ function shuffleArray(a){ const arr = a.slice(); for(let i=arr.length-1;i>0;i--)
 
 function startQuiz(){
   score=0; current=0; goalReached=false;
-  // shuffle questions and also shuffle options inside each question
   questions = shuffleArray(rawQuestions.map(q=>({q:q.q,o:shuffleArray(q.o),a:q.a})));
-  // After shuffling options, a (index) must be recalculated: find which option equals original correct text
   questions = questions.map(orig => {
     const raw = rawQuestions.find(r=>r.q===orig.q);
     let correctText = raw.o[raw.a];
@@ -116,13 +113,34 @@ function selectOption(i){
   const opts=document.querySelectorAll('.option');
   opts.forEach((el,idx)=>{ el.onclick=null; if(idx===q.a) el.classList.add('correct'); if(idx===i && idx!==q.a) el.classList.add('wrong'); });
   if(i===q.a) score++;
-  if(score>=4 && !goalReached){ goalReached=true; goalEl.style.display='block'; createConfetti(); try{ applause.currentTime=0; applause.play(); }catch(e){} nextTopicBtn.classList.remove('hidden'); }
-  nextBtn.classList.remove('hidden');
+
+  // Se atingir 4 acertos, mostra apenas o botão de Finalizar
+  if(score>=4 && !goalReached){
+    goalReached=true;
+    goalEl.style.display='block';
+    createConfetti();
+    try{ applause.currentTime=0; applause.play(); }catch(e){}
+    nextTopicBtn.classList.remove('hidden');
+    nextBtn.classList.add('hidden'); // esconde o botão "Próxima"
+  } else if(!goalReached){
+    nextBtn.classList.remove('hidden'); // mostra "Próxima" apenas se ainda não atingiu 4 acertos
+  }
 }
 
 nextBtn.addEventListener('click', ()=>{ current++; nextBtn.classList.add('hidden'); if(current<questions.length) renderQuestion(); else finishQuiz(); });
 
-function finishQuiz(){ container.innerHTML=''; scoreEl.style.display='block'; restartBtn.style.display='inline-block'; if(score>=4){ scoreEl.textContent = `🎉 Você acertou ${score} de ${questions.length} e venceu este tópico!`; nextTopicBtn.classList.remove('hidden'); } else { scoreEl.textContent = `Você acertou ${score} de ${questions.length}. Tente novamente para atingir 4 acertos.`; } progressEl.textContent = 'Fim'; }
+function finishQuiz(){
+  container.innerHTML='';
+  scoreEl.style.display='block';
+  restartBtn.style.display='inline-block';
+  if(score>=4){
+    scoreEl.textContent = `🎉 Você acertou ${score} de ${questions.length} e venceu este tópico!`;
+    nextTopicBtn.classList.remove('hidden');
+  } else {
+    scoreEl.textContent = `Você acertou ${score} de ${questions.length}. Tente novamente para atingir 4 acertos.`;
+  }
+  progressEl.textContent = 'Fim';
+}
 
 restartBtn.addEventListener('click', startQuiz);
 
