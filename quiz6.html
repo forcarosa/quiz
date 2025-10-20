@@ -21,13 +21,23 @@ h2.question{font-size:1.05rem;margin:10px 0 12px 0;color:#333}
 .correct{background:#c8e6c9!important}
 .wrong{background:#ffcdd2!important}
 .controls{display:flex;gap:8px;justify-content:center;align-items:center;margin-top:8px}
-button{background:var(--pink);color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:700}
+button{background:var(--pink);color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:700;transition:all .3s ease}
 button.secondary{background:#6a1b4d}
 .hidden{display:none}
 #score{display:none;text-align:center;margin-top:14px;font-weight:700}
 .confetti{position:fixed;width:10px;height:10px;pointer-events:none;z-index:9999;animation:fall 3s linear forwards;border-radius:2px}
 @keyframes fall{0%{transform:translateY(-10vh) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
 .footer{text-align:center;margin-top:12px;color:#666;font-size:0.9rem}
+
+/* 💖 Destaque animado para o botão Finalizar */
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255,77,166,0.6); transform: scale(1); }
+  70% { box-shadow: 0 0 20px 10px rgba(255,77,166,0); transform: scale(1.05); }
+  100% { box-shadow: 0 0 0 0 rgba(255,77,166,0); transform: scale(1); }
+}
+.glow {
+  animation: pulse 1.5s infinite;
+}
 </style>
 </head>
 <body>
@@ -92,6 +102,7 @@ function startQuiz(){
   restartBtn.style.display='none';
   nextBtn.classList.add('hidden');
   nextTopicBtn.classList.add('hidden');
+  nextTopicBtn.classList.remove('glow');
   goalEl.style.display='none';
   renderQuestion();
   updateProgress();
@@ -114,16 +125,17 @@ function selectOption(i){
   opts.forEach((el,idx)=>{ el.onclick=null; if(idx===q.a) el.classList.add('correct'); if(idx===i && idx!==q.a) el.classList.add('wrong'); });
   if(i===q.a) score++;
 
-  // Se atingir 4 acertos, mostra apenas o botão de Finalizar
+  // Quando atingir 4 acertos, na mesma tela:
   if(score>=4 && !goalReached){
     goalReached=true;
     goalEl.style.display='block';
     createConfetti();
     try{ applause.currentTime=0; applause.play(); }catch(e){}
     nextTopicBtn.classList.remove('hidden');
-    nextBtn.classList.add('hidden'); // esconde o botão "Próxima"
+    nextTopicBtn.classList.add('glow');   // 💖 ativa o destaque animado
+    nextBtn.classList.add('hidden');
   } else if(!goalReached){
-    nextBtn.classList.remove('hidden'); // mostra "Próxima" apenas se ainda não atingiu 4 acertos
+    nextBtn.classList.remove('hidden');
   }
 }
 
@@ -136,6 +148,7 @@ function finishQuiz(){
   if(score>=4){
     scoreEl.textContent = `🎉 Você acertou ${score} de ${questions.length} e venceu este tópico!`;
     nextTopicBtn.classList.remove('hidden');
+    nextTopicBtn.classList.add('glow');
   } else {
     scoreEl.textContent = `Você acertou ${score} de ${questions.length}. Tente novamente para atingir 4 acertos.`;
   }
@@ -143,9 +156,7 @@ function finishQuiz(){
 }
 
 restartBtn.addEventListener('click', startQuiz);
-
 nextTopicBtn.addEventListener('click', ()=>{ window.location.href = 'congrats.html'; });
-
 window.selectOption = selectOption;
 startQuiz();
 </script>
