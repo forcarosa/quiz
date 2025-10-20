@@ -122,7 +122,7 @@ function selectOption(i){
 
 nextBtn.addEventListener('click', ()=>{ current++; if(current<questions.length) renderQuestion(); else finishQuiz(); });
 
-function finishQuiz(){ container.innerHTML=''; nextBtn.classList.add('hidden'); scoreEl.style.display='block'; restartBtn.style.display='inline-block'; if(score>=4){ scoreEl.textContent = `🎉 Você acertou ${score} de ${questions.length} e venceu este tópico!`; nextTopicBtn.classList.remove('hidden'); } else { scoreEl.textContent = `Você acertou ${score} de ${questions.length}. Tente novamente para atingir 4 acertos.`; } progressEl.textContent = 'Fim'; }
+function finishQuiz(){ container.innerHTML=''; scoreEl.style.display='block'; restartBtn.style.display='inline-block'; if(score>=4){ scoreEl.textContent = `🎉 Você acertou ${score} de ${questions.length} e venceu este tópico!`; nextTopicBtn.classList.remove('hidden'); } else { scoreEl.textContent = `Você acertou ${score} de ${questions.length}. Tente novamente para atingir 4 acertos.`; } progressEl.textContent = 'Fim'; }
 
 restartBtn.addEventListener('click', startQuiz);
 
