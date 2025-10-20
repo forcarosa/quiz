@@ -117,7 +117,7 @@ function selectOption(i){
   opts.forEach((el,idx)=>{ el.onclick=null; if(idx===q.a) el.classList.add('correct'); if(idx===i && idx!==q.a) el.classList.add('wrong'); });
   if(i===q.a) score++;
   if(score>=4 && !goalReached){ goalReached=true; goalEl.style.display='block'; createConfetti(); try{ applause.currentTime=0; applause.play(); }catch(e){} nextTopicBtn.classList.remove('hidden'); }
-  
+  nextBtn.classList.remove('hidden');
 }
 
 nextBtn.addEventListener('click', ()=>{ current++; nextBtn.classList.add('hidden'); if(current<questions.length) renderQuestion(); else finishQuiz(); });
