@@ -133,7 +133,7 @@ function selectOption(i){
     try{ applause.currentTime=0; applause.play(); }catch(e){}
     nextTopicBtn.classList.remove('hidden');
     nextTopicBtn.classList.add('glow');   // 💖 ativa o destaque animado
-    nextBtn.classList.add('hidden');
+    nextBtn.classList.remove('hidden');
   } else if(!goalReached){
     nextBtn.classList.remove('hidden');
   }
